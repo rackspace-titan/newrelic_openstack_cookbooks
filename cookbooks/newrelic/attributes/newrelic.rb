@@ -16,3 +16,4 @@ default[:newrelic][:tarball_url] = "http://dl.dropbox.com/u/22571016/newrelic-py
 
 # Nova API Configs
 default[:newrelic][:nova_api_ini_path] = "/etc/newrelic/nova-api.ini"
+default[:newrelic][:nova_api_instrumentation_path] = "/usr/local/lib/python2.6/dist-packages/nova-api-instrumentation.py"

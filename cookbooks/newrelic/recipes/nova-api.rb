@@ -18,9 +18,15 @@
 include_recipe "#{@cookbook_name}::install"
 
 api_ini_path=node[:newrelic][:nova_api_ini_path]
+api_instrumentation_path=node[:newrelic][:nova_api_instrumentation_path]
 
 cookbook_file api_ini_path do
   source "nova-api.ini"
+  mode "0644"
+end
+
+cookbook_file api_instrumentation_path do
+  source "nova-api-instrumentation.py"
   mode "0644"
 end
 
