@@ -1,0 +1,12 @@
+= Openstack Cookbooks
+
+Includes the newrelic cookbook to help configure Openstack Nova with Newrelic.
+
+== Author
+
+Dan Prince <dan.prince@rackspace.com>
+
+== License
+
+See COPYING for license information.
+Copyright (c) 2011, Rackspace US, Inc.

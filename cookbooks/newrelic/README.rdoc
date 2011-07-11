@@ -1,0 +1,35 @@
+= AUTHOR:
+ Dan Prince
+ Rackspace
+ July 2011 
+
+= DESCRIPTION:
+
+ Configure NewRelic for use with Openstack Nova.
+
+ Currently supports nova-api.
+
+= REQUIREMENTS:
+
+ -A newrelic license key.
+
+= ATTRIBUTES: 
+
+ - See attributes/newrelic.rb.
+
+= USAGE:
+
+ Example attributes in JSON:
+
+    "newrelic": {
+        {
+        "license_key": "ABCDEFG....",
+        "tarball_url": "http://PYTHON_RELEASE_TARBALL_URL"
+        }
+    }
+
+ Example runlist:
+
+    "run_list": [
+         "recipe[newrelic::nova-api]"
+    ]
