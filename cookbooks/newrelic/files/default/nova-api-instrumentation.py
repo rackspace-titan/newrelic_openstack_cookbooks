@@ -13,12 +13,12 @@ def instrument_nova_wsgi(module):
     # This is wrapping the WSGI application entry point by
     # capturing it while being passed into server object for
     # use.
-    def in_server_init(self, name, application, port, poolsize, **kwargs):
-        return ((self, name, newrelic.agent.WSGIApplicationWrapper(application),
-                port, poolsize), kwargs)
+    def in_server_init(self, name, application, **kwargs):
+        return ((self, name, newrelic.agent.WSGIApplicationWrapper(application)),
+                kwargs)
 
     newrelic.agent.wrap_in_function(module, 'Server.__init__',
-            in_server_start)
+            in_server_init)
 
 def instrument_nova_api_openstack_wsgi(module):
 
