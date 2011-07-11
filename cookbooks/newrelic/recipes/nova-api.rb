@@ -36,6 +36,12 @@ directory newrelic_config_dir do
   action :create
 end
 
+directory newrelic_log_dir do
+  owner "nova"
+  group "nova"
+  action :create
+end
+
 bash "inject_newrelic_nova_api" do
   user "root"
   code <<-EOH
