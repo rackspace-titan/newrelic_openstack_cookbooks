@@ -5,11 +5,11 @@ license_key=<%= node[:newrelic][:license_key] %>
 pidfile=<%= node[:newrelic][:pidfile] %>
 logfile=<%= node[:newrelic][:logfile] %>
 loglevel=<%= node[:newrelic][:loglevel] %>
-collector_host=<%= node[:newrelic][:collector_host] %>
-ssl=<%= node[:newrelic][:ssl] %>
-timeout=<%= node[:newrelic][:timeout] %>
-socket=<%= node[:newrelic][:socket] %>
-max_threads=<%= node[:newrelic][:max_threads] %>
-metric_limit=<%= node[:newrelic][:metric_limit] %>
-special=<%= node[:newrelic][:special] %>
+<% if node[:newrelic][:collector_host] %>collector_host=<%= node[:newrelic][:collector_host] %><% end %>
+<% if node[:newrelic][:ssl] %>ssl=<%= node[:newrelic][:ssl] %><% end %>
+<% if node[:newrelic][:timeout] %>timeout=<%= node[:newrelic][:timeout] %><% end %>
+<% if node[:newrelic][:socket] %>socket=<%= node[:newrelic][:socket] %><% end %>
+<% if node[:newrelic][:max_threads] %>max_threads=<%= node[:newrelic][:max_threads] %><% end %>
+<% if node[:newrelic][:metric_limit] %>metric_limit=<%= node[:newrelic][:metric_limit] %><% end %>
+<% if node[:newrelic][:special] %>special=<%= node[:newrelic][:special] %><% end %>
 <% if node[:newrelic][:proxy] %>proxy=<%= node[:newrelic][:proxy] %><% end %>
