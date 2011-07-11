@@ -10,7 +10,7 @@ default[:newrelic][:logfile] = "/var/log/newrelic/newrelic-daemon.log"
 #default[:newrelic][:max_threads] = "8"
 #default[:newrelic][:metric_limit] = "2000"
 #default[:newrelic][:special] = "0"
-default[:newrelic][:proxy] = ""
+#default[:newrelic][:proxy] = ""
 
 default[:newrelic][:tarball_url] = "http://dl.dropbox.com/u/22571016/newrelic-python-0.3.0.0-x86_64-unknown-linux-gnu.tar.gz"
 
