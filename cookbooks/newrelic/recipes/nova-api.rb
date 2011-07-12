@@ -38,8 +38,8 @@ directory newrelic_config_dir do
 end
 
 directory newrelic_log_dir do
+  mode "777"
   owner "nova"
-  group "nova"
   action :create
 end
 
