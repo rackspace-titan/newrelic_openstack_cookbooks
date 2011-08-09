@@ -66,8 +66,8 @@ def instrument_nova_api_openstack_wsgi(module):
     # Wrap the constructor for a resource and instrument automatically
     # any controller object associated with a resource.
 
-    def in_function_resource_init(resource, controller, serializers=None,
-            deserializers=None, *args, **kwargs):
+    def in_function_resource_init(resource, controller, serializer=None,
+            deserializer=None, *args, **kwargs):
 
         newrelic.agent.log(newrelic.agent.LOG_DEBUG, str(controller))
 
@@ -82,7 +82,7 @@ def instrument_nova_api_openstack_wsgi(module):
 		    wrapped = newrelic.agent.FunctionTraceWrapper(object)
 		    setattr(controller, name, wrapped)
 
-        return ((resource, controller, serializers, deserializers), kwargs)
+        return ((resource, controller, serializer, deserializer), kwargs)
 
     newrelic.agent.wrap_in_function(module, 'Resource.__init__',
             in_function_resource_init)
