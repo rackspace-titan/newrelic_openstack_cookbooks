@@ -82,7 +82,7 @@ def instrument_nova_api_openstack_wsgi(module):
 		    wrapped = newrelic.agent.FunctionTraceWrapper(object)
 		    setattr(controller, name, wrapped)
 
-        return ((resource, controller, serializer, deserializer), kwargs)
+        return ((resource, controller, serializer=serializer, deserializer=deserializer), kwargs)
 
     newrelic.agent.wrap_in_function(module, 'Resource.__init__',
             in_function_resource_init)
