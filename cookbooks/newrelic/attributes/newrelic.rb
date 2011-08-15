@@ -12,7 +12,7 @@ default[:newrelic][:logfile] = "/var/log/newrelic/newrelic-daemon.log"
 #default[:newrelic][:special] = "0"
 #default[:newrelic][:proxy] = ""
 
-default[:newrelic][:tarball_url] = "http://dl.dropbox.com/u/22571016/newrelic-python-0.3.7.0-x86_64-unknown-linux-gnu.tar.gz"
+default[:newrelic][:tarball_url] = "http://dl.dropbox.com/u/22571016/newrelic-python-0.4.4.125-x86_64-unknown-linux-gnu.tar.gz"
 
 default[:newrelic][:nova_api_ini_path] = "/etc/newrelic/nova-api.ini"
 default[:newrelic][:newrelic_config_dir] = "/etc/newrelic"
