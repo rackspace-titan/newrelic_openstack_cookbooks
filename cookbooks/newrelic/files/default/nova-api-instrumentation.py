@@ -66,7 +66,8 @@ def instrument_nova_api_openstack_wsgi(module):
     # Wrap the constructor for a resource and instrument automatically
     # any controller object associated with a resource.
 
-    def in_function_resource_init(resource, controller, *args, **kwargs):
+    def in_function_resource_init(resource, controller, serializers=None,
+            deserializers=None, *args, **kwargs):
 
         newrelic.agent.log(newrelic.agent.LOG_DEBUG, str(controller))
 
@@ -81,7 +82,7 @@ def instrument_nova_api_openstack_wsgi(module):
 		    wrapped = newrelic.agent.FunctionTraceWrapper(object)
 		    setattr(controller, name, wrapped)
 
-        return ((resource, controller), kwargs)
+        return ((resource, controller, serializers, deserializers), kwargs)
 
     newrelic.agent.wrap_in_function(module, 'Resource.__init__',
             in_function_resource_init)
@@ -213,3 +214,82 @@ def instrument_api_openstack_auth(module):
 		newrelic.agent.log(newrelic.agent.LOG_DEBUG,
                     'instrument %s' % object_path)
 		newrelic.agent.wrap_function_trace(module, object_path)
+
+def instrument_rpc(module):
+
+    newrelic.agent.log(newrelic.agent.LOG_DEBUG, 'instrument_rpc()')
+
+    # This one is client side.
+
+    newrelic.agent.wrap_function_trace(module, 'multicall')
+    newrelic.agent.wrap_function_trace(module, 'call')
+    newrelic.agent.wrap_function_trace(module, 'cast')
+    newrelic.agent.wrap_function_trace(module, 'fanout_cast')
+    newrelic.agent.wrap_function_trace(module, 'send_message')
+
+    # This one is server side.
+
+    #newrelic.agent.wrap_background_task(module,
+    #    'AdapterConsumer._process_data')
+
+    class FakeWebTransaction(newrelic.agent.ObjectWrapper):
+        def __call__(self, consumer, msg_id, ctxt, method, args, **kwargs):
+            try:
+                environ = { 'REQUEST_URI': '*' }
+                application = newrelic.agent.application()
+                transaction = newrelic.agent.WebTransaction(
+                        application, environ)
+                transaction.__enter__()
+                transaction.name_transaction(method, "Custom/Service")
+		result = self.__next_object__(consumer, msg_id, ctxt,
+                        method, args, **kwargs)
+            except:
+                newrelic.agent.log_exception(*sys.exc_info())
+                transaction.__exit__(*sys.exc_info())
+            else:
+                transaction.__exit__(None, None, None)
+		return result
+
+    newrelic.agent.wrap_object(module, 'AdapterConsumer._process_data',
+            FakeWebTransaction)
+
+def instrument_carrot_messaging(module):
+
+    newrelic.agent.log(newrelic.agent.LOG_DEBUG,
+            'instrument_carrot_messaging()')
+
+    def url_publisher_send(publisher, message_data, routing_key=None,
+            *args, **kwargs):
+        routing_key = routing_key or publisher.routing_key
+        return 'carrot://%s/%s' % (publisher.exchange, routing_key)
+
+    newrelic.agent.wrap_external_trace(module, 'Publisher.send',
+        library='carrot', url=url_publisher_send)
+
+def instrument_compute_manager(module):
+
+    newrelic.agent.log(newrelic.agent.LOG_DEBUG,
+            'instrument_compute_manager()')
+
+    class DumpStackTrace(object):
+        def __init__(self, wrapped):
+           self.__next_object__ = wrapped
+        def __get__(self, obj, objtype):
+            import types
+            return types.MethodType(self, obj, objtype)
+            #return self.__next_object__.__get__(obj, objtype)
+        def __call__(self, *args, **kwargs):
+            import StringIO
+            output = StringIO.StringIO()
+            import traceback
+            traceback.print_stack(file=output)
+            #newrelic.agent.log(newrelic.agent.LOG_ERROR, "DUMP")
+            newrelic.agent.log(newrelic.agent.LOG_ERROR, output.getvalue())
+            #try:
+            #    raise RuntimeError('DUMP STACK TRACE')
+            #except:
+            #    newrelic.agent.log_exception(*sys.exc_info())
+            return self.__next_object__(*args, **kwargs)
+
+    newrelic.agent.wrap_object(module, 'ComputeManager._run_instance',
+            DumpStackTrace)
